@@ -65,8 +65,8 @@ export const projects: Project[] = [
       { label: "02 / Challenge", title: "Turn a venture idea into something people can actually use.", copy: "The first product needed to structure destinations, services, local operators and editorial content, while creating a useful path from discovery to a request that could be reviewed locally." },
       { label: "03 / Product", title: "A working platform and a structured request journey.", copy: "I developed the current platform in approximately one month using TypeScript, Express, PostgreSQL, Drizzle ORM, Vercel and Railway. The product work includes the interface, service flows, database structure, deployment, SEO landing pages and product iteration." },
     ],
-    evidence: [["~1 month", "Current platform development"], ["1.5K+", "Paid Social sessions"], ["0", "Conversions from initial paid tests"]],
-    evidenceNote: "The initial paid Social experiments brought real traffic but did not generate conversions. This is product-validation evidence, not a successful acquisition result: it exposed the product to users and pointed to further iteration in targeting, proposition and the conversion journey.",
+    evidence: [["~1 month", "Current platform development"], ["1.5K+", "Paid Social sessions"]],
+    evidenceNote: "The initial Paid Social experiments brought real traffic and behavioural evidence. The tests were used to identify further iteration in targeting, proposition and the conversion journey, rather than to make a completed acquisition claim.",
     images: [
       { src: asset("optimized/ITALYANA_desktop_home.webp"), alt: "Italyana desktop discovery page introducing Amalfi Coast places, experiences and services.", label: "01 / Discovery" },
       { src: asset("optimized/ITALYANA_desktop_service.webp"), alt: "Italyana desktop service-selection page with concierge experience categories.", label: "02 / Service selection" },
