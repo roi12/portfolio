@@ -1,122 +1,48 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import { contactLinks, projects, type Project } from "./data/projects";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+function Arrow() { return <span aria-hidden="true">↗</span>; }
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+function ProjectImage({ image, className = "", priority = false }: { image: Project["images"][number]; className?: string; priority?: boolean }) {
+  return <figure className={`project-image ${className}`}><img src={image.src} alt={image.alt} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} decoding="async" /><figcaption>{image.label}</figcaption></figure>;
 }
 
-export default App
+function Header() {
+  return <header className="header wrap"><a className="wordmark" href="#" aria-label="Luca Roggi home">Luca Roggi<span className="brand-dot">.</span></a><nav aria-label="Main navigation">{["Work", "About", "Experience", "Contact"].map((item) => <a key={item} href={`#${item.toLowerCase()}`}>{item}</a>)}</nav><span className="location"><i /> Currently in Sydney</span></header>;
+}
+
+function ProjectVisual({ project, detail = false, priority = false }: { project: Project; detail?: boolean; priority?: boolean }) {
+  const loadImmediately = detail || priority;
+  if (project.id === "marental") return <div className={`project-visual visual-marental ${detail ? "detail-visual" : ""}`}><ProjectImage image={project.images[0]} priority={loadImmediately} className="marental-desktop" /><ProjectImage image={project.images[1]} className="marental-mobile" /></div>;
+  if (project.id === "amalfi-re") return <div className={`project-visual visual-amalfi-re ${detail ? "detail-visual" : ""}`}><ProjectImage image={project.images[1]} priority={loadImmediately} className="amalfi-property" />{detail && <ProjectImage image={project.images[0]} className="amalfi-home" />}</div>;
+  return <div className={`project-visual visual-italyana ${detail ? "detail-visual" : ""}`}><ProjectImage image={project.images[0]} priority={loadImmediately} className="italyana-home" /></div>;
+}
+
+function ProjectCard({ project, priority }: { project: Project; priority: boolean }) {
+  return <article className={`project-card card-${project.id}`}><ProjectVisual project={project} priority={priority} /><div className="project-copy"><div className="project-kicker"><span>{project.number} / {project.name}</span><span>{project.year}</span></div><p className="category">{project.category}</p><h3><a href={`#work/${project.id}`}>{project.headline}</a></h3><p className="project-summary">{project.summary}</p><div className="project-metric"><strong>{project.metric}</strong><span>{project.metricLabel}</span></div><p className="metric-note">{project.note}</p><a className="text-link" href={`#work/${project.id}`}>Explore the case study <Arrow /></a></div></article>;
+}
+
+const experience = [["2025–2026", "ROCKWOOL Group", "Digital Sales & Web Analytics", "Web, CRM and digital sales data. Understanding conversion behaviour, reporting and commercial optimisation."], ["2023–2025", "ICONSULTING", "Data Engineer", "Data engineering, BI and KPI monitoring, with work across structured datasets, digital transformation and data migration."], ["2023", "illimity", "Process Design & Analysis", "Process optimisation, automation, RPA and OCR-assisted workflows."], ["2023–Present", "Sfusi / Independent Projects", "Digital Strategy & Product", "Product development, digital strategy and go-to-market work for SMEs and tourism ventures."]];
+
+function Home() {
+  return <><section className="hero wrap" aria-labelledby="hero-title"><div className="eyebrow hero-eyebrow"><span className="small-line" /> BUSINESS THINKING. HANDS-ON BUILDING.</div><h1 id="hero-title">I build digital products<br /> and <span>growth systems.</span></h1><div className="hero-bottom"><div><p className="hero-description">I combine technology, data and digital acquisition to turn business ideas into working products — and working products into measurable growth.</p><div className="hero-actions"><a className="button" href="#work">View selected work <span aria-hidden="true">↓</span></a><a className="text-link" href="#contact">Get in touch <Arrow /></a></div></div><div className="currently"><span className="eyebrow">CURRENTLY</span><p>MSc Business Administration & Data Science<span>Copenhagen Business School</span></p><p>MBA Exchange<span>AGSM / UNSW, Sydney</span></p></div></div><div className="hero-foot"><span>PRODUCT × DATA × ACQUISITION</span><span>SCROLL TO EXPLORE ↓</span></div></section>
+    <section id="work" className="work wrap"><div className="section-heading"><div><span className="eyebrow">01 / SELECTED WORK</span><h2>Ideas into products.<br /><span>Products into progress.</span></h2></div><p>Three different business challenges.<br />One connected approach: build, measure, improve.</p></div><div className="projects">{projects.map((project, index) => <ProjectCard key={project.id} project={project} priority={index === 0} />)}</div></section>
+    <TechnicalWork /><About /><Experience /><Contact /></>;
+}
+
+function TechnicalWork() { const work = [["01", "Enterprise automation", "illimity bank", "Document-generation workflows, OCR-assisted identity-document processing and browser automation. A practical understanding of where automation helps — and where it needs oversight.", "Power Automate · Forms · SharePoint · OCR · Python · Selenium"], ["02", "Biofuel price forecasting", "Predictive analytics", "Comparing statistical and neural forecasting approaches, with a focus on forecast accuracy and usefulness in business decisions.", "ARIMA · NNAR · GRU / LSTM · Hybrid models"], ["03", "AI venture decision engine", "Decision support", "An AI-assisted workflow for early-stage startup scouting and due diligence, turning weak and unstructured signals into comparable decision-support information.", "Startup scouting · Signal structuring · Due diligence"]]; return <section className="technical wrap" aria-labelledby="technical-title"><div className="technical-heading"><h2 id="technical-title">Selected technical work</h2><p>A closer look at the systems behind the work.</p></div><div className="technical-grid">{work.map(([number, title, label, description, tags]) => <article className="technical-card" key={number}><span className="technical-number">{number} /</span><p className="eyebrow">{label}</p><h3>{title}</h3><p>{description}</p><div className="technical-tags">{tags}</div></article>)}</div></section>; }
+function About() { const capabilities = [["Build", "Digital products", "Web development", "Full-stack implementation", "Automation"], ["Measure", "Analytics · SQL · Python", "Power BI", "Experimentation"], ["Grow", "SEO · Digital acquisition", "Content systems", "Conversion optimisation"], ["Think", "Product strategy", "Digital transformation", "AI strategy · Business analysis"]]; return <section id="about" className="about"><div className="wrap about-grid"><div><span className="eyebrow">02 / ABOUT</span><h2>Business context.<br />Technical depth.<br /><em>A builder’s mindset.</em></h2></div><div className="about-copy"><p className="lead">My work sits between understanding a business and building what moves it forward.</p><p>I started with processes and automation, moved into data engineering and commercial analytics, and brought those perspectives into building digital products and acquisition systems.</p><p>That progression shapes how I work: understand the problem, build something useful, then use evidence to decide what comes next.</p><div className="education"><span className="eyebrow">THE ACADEMIC THREAD</span><p>BSc Digital Management<span>Ca’ Foscari University / H-FARM</span></p><p>MSc Business Administration & Data Science<span>Copenhagen Business School</span></p><p>MBA Exchange<span>AGSM / UNSW, Sydney</span></p></div></div></div><div className="wrap capabilities">{capabilities.map(([title, ...items], i) => <div key={title}><span className="eyebrow">0{i + 1}</span><h3>{title}<span aria-hidden="true">↗</span></h3>{items.map((item) => <p key={item}>{item}</p>)}</div>)}</div></section>; }
+function Experience() { return <section id="experience" className="experience wrap"><div className="section-heading"><div><span className="eyebrow">03 / EXPERIENCE</span><h2>A connected perspective.</h2></div></div><div className="timeline">{experience.map(([date, company, role, description]) => <article key={company}><span className="experience-date">{date}</span><div><h3>{company}</h3><span>{role}</span></div><p>{description}</p></article>)}</div></section>; }
+function Contact() { return <section id="contact" className="contact"><div className="wrap"><span className="eyebrow">04 / LET’S TALK</span><div className="contact-heading"><h2>Have something<br />worth <em>building?</em></h2><span className="contact-arrow" aria-hidden="true">↗</span></div><div className="contact-bottom"><p>A business problem, an early-stage idea, or a new perspective.<br />Open to project collaborations, startup conversations and digital transformation work.</p>{contactLinks.length > 0 && <div className="contact-links">{contactLinks.map(({ label, href }) => <a key={label} href={href}>{label} <Arrow /></a>)}</div>}</div></div></section>; }
+
+function EvidenceImages({ project }: { project: Project }) { if (project.id === "marental") return <div className="evidence-media marental-evidence"><ProjectImage image={project.images[2]} /><ProjectImage image={project.images[3]} /></div>; if (project.id === "amalfi-re") return <div className="evidence-media amalfi-evidence"><ProjectImage image={project.images[2]} /><ProjectImage image={project.images[3]} /></div>; return null; }
+function ItalyanaArchitecture() { return <section className="architecture" aria-labelledby="architecture-title"><div><span className="eyebrow">PRODUCT ARCHITECTURE</span><h2 id="architecture-title">Built for a connected request journey.</h2><p>Technology serves a simple purpose here: turn local expertise into a structured product and a request a local team can act on.</p></div><div className="architecture-flow" aria-label="Italyana product architecture"><span>Traveller</span><i>↓</i><span>Digital product / UI</span><i>↓</i><span>Destinations + services</span><i>↓</i><span>Express</span><i>↓</i><span>Drizzle ORM</span><i>↓</i><span>PostgreSQL</span><small>Deployment: Vercel + Railway</small></div></section>; }
+
+function CaseStudy({ project }: { project: Project }) {
+  const next = projects[Number(project.number) % projects.length];
+  return <><article className={`case-study wrap case-${project.id}`}><a className="text-link back-link" href="#work">← Back to selected work</a><div className="eyebrow">{project.number} / {project.name} / {project.category}</div><h1>{project.headline}</h1><p className="case-intro">{project.summary}</p><ProjectVisual project={project} detail /><div className="case-overview"><div><span className="eyebrow">MY ROLE</span><p>{project.role}</p></div><div><span className="eyebrow">CONTEXT</span><p>{project.context}</p></div><div><span className="eyebrow">APPROACH</span><p>{project.approach}</p></div></div><div className="case-narrative">{project.sections.map(({ label, title, copy }) => <section key={label}><span className="eyebrow">{label}</span><h2>{title}</h2><p>{copy}</p></section>)}</div>{project.id === "italyana" && <><section className="product-journey" aria-labelledby="journey-title"><div className="case-section-heading"><span className="eyebrow">04 / PRODUCT JOURNEY</span><h2 id="journey-title">From discovery to a request that can be acted on.</h2></div><div className="journey-images">{project.images.map((image) => <ProjectImage key={image.label} image={image} />)}</div></section><ItalyanaArchitecture /></>}<section className="evidence"><div className="case-section-heading"><span className="eyebrow">{project.id === "italyana" ? "05 / EVIDENCE & LEARNING" : "04 / EVIDENCE"}</span><h2>{project.id === "italyana" ? "A real product, tested with real traffic." : "Evidence alongside the product."}</h2></div><div className="evidence-grid">{project.evidence.map(([value, label], index) => <div key={`${label}-${index}`}><strong>{value}</strong><span>{label}</span></div>)}</div><p className="evidence-note">{project.evidenceNote}</p>{project.id !== "italyana" && <><p className="reporting-note">The report below is an original screenshot from a specific reporting window. Its visible figures are supporting evidence and do not replace the approved overall case-study metrics above.</p><EvidenceImages project={project} /></>}</section><section className="learning"><span className="eyebrow">{project.id === "italyana" ? "06 / NEXT ITERATION" : "05 / NEXT STEP"}</span><h2>{project.id === "italyana" ? "The work now is in the iteration." : "Measurement is the next layer of the product."}</h2><p>{project.id === "marental" ? "The next priority is connecting search visibility to enquiries and bookings through conversion tracking." : project.id === "amalfi-re" ? "Continue evaluating the acquisition ecosystem with channel-specific measurement. Paid experiments need their own evidence before any performance claim can be made." : "The next iteration focuses on traffic quality, proposition and the conversion journey — using what the first live tests revealed."}</p></section><a className="next-project text-link" href={`#work/${next.id}`}>Next project: {next.name} <Arrow /></a></article><Contact /></>;
+}
+
+function App() { const [hash, setHash] = useState(window.location.hash); useEffect(() => { const update = () => setHash(window.location.hash); window.addEventListener("hashchange", update); return () => window.removeEventListener("hashchange", update); }, []); const project = projects.find((item) => hash === `#work/${item.id}`); useEffect(() => { document.title = project ? `${project.name} — Luca Roggi` : "Luca Roggi — Digital products & growth systems"; if (project || !hash || hash.startsWith("#work/")) window.scrollTo({ top: 0, behavior: "instant" }); else requestAnimationFrame(() => document.getElementById(hash.slice(1))?.scrollIntoView()); }, [hash, project]); return <><a className="skip-link" href="#main" onClick={(event) => { event.preventDefault(); document.getElementById("main")?.focus(); }}>Skip to content</a><Header /><main id="main" tabIndex={-1}>{project ? <CaseStudy project={project} /> : <Home />}</main><footer className="footer wrap"><a className="wordmark" href="#">Luca Roggi<span className="brand-dot">.</span></a><span>Business. Technology. Data.</span><a href="#">Back to top ↑</a></footer></>; }
+export default App;
